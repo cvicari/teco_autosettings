@@ -39,13 +39,13 @@ def printPreamble()
 	EOF
 end
 
-yamlProps = YAML.load_file("peakshift_settings.yaml")
+yamlProps = YAML.load_file("teco_peakshift_settings.yaml")
 additional_holidays = yamlProps["additional_holidays"]
 weekend = yamlProps["weekend"]
 
 printPreamble()
 
-startHour   = 7
+startHour   = 8
 startMinute = 0
 endHour     = 19
 endMinute   = 5
@@ -54,7 +54,7 @@ active      = 1
 
 holidayManager = HolidayManager.new(weekend, additional_holidays, Date.today)
 
-for i in 1..52 do
+for i in 1..4 do
 	startTime = holidayManager.getNextWorkBegin
 	endTime = holidayManager.getNextWorkEnd
 
