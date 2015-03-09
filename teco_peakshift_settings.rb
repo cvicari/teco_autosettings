@@ -1,8 +1,11 @@
 require 'yaml'
 require 'set'
 
-# options to implement: (1) save current registry keys, (2) backup peak shift values to a .reg file
-# (3) check teco version on exe, check registry key presence, (4) decide where to save .reg file, dump log information on screen
+# options to implement:
+# (*) backup peak shift values to a .reg file
+# => reg export "HKEY_LOCAL_MACHINE\\SOFTWARE\\Toshiba\\eco Utility\\PeakShift" backup.reg
+# (*) check teco version on exe, check registry key presence
+# (*) decide where to save .reg file, dump log information on screen
 
 class HolidayManager
 	def initialize(weekend, additional_holidays, time)
@@ -39,20 +42,20 @@ def printPreamble()
 	EOF
 end
 
-yamlProps = YAML.load_file("teco_peakshift_settings.yaml")
-additional_holidays = yamlProps["additional_holidays"]
-weekend = yamlProps["weekend"]
+YamlProps = YAML.load_file("teco_peakshift_settings.yaml")
+Additional_holidays = YamlProps["additional_holidays"]
+Weekend     = YamlProps["weekend"]
+StartHour   = YamlProps["startHour"]
+StartMinute = YamlProps["startMinute"]
+EndHour     = YamlProps["endHour"]
+EndMinute   = YamlProps["endMinute"]
+MinCharge   = YamlProps["minCharge"]
+
+Active      = 1
 
 printPreamble()
 
-startHour   = 8
-startMinute = 0
-endHour     = 19
-endMinute   = 5
-minCharge   = 15
-active      = 1
-
-holidayManager = HolidayManager.new(weekend, additional_holidays, Date.today)
+holidayManager = HolidayManager.new(Weekend, Additional_holidays, Date.today)
 
 for i in 1..4 do
 	startTime = holidayManager.getNextWorkBegin
@@ -71,11 +74,11 @@ for i in 1..4 do
 					    #{startDay.to_s(16)},00,00,00, \\
 					    #{endMonth.to_s(16)},00,00,00, \\
 					      #{endDay.to_s(16)},00,00,00, \\
-					   #{startHour.to_s(16)},00,00,00, \\
-					 #{startMinute.to_s(16)},00,00,00, \\
-					     #{endHour.to_s(16)},00,00,00, \\
-					   #{endMinute.to_s(16)},00,00,00, \\
-					   #{minCharge.to_s(16)},00,00,00, \\
-					      #{active.to_s(16)},00,00,00
+					   #{StartHour.to_s(16)},00,00,00, \\
+					 #{StartMinute.to_s(16)},00,00,00, \\
+					     #{EndHour.to_s(16)},00,00,00, \\
+					   #{EndMinute.to_s(16)},00,00,00, \\
+					   #{MinCharge.to_s(16)},00,00,00, \\
+					      #{Active.to_s(16)},00,00,00
 	EOF
 end
