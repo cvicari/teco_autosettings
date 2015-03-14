@@ -6,7 +6,6 @@ require 'logger'
 # (*) backup peak shift values to a .reg file
 # => reg export "HKEY_LOCAL_MACHINE\\SOFTWARE\\Toshiba\\eco Utility\\PeakShift" backup.reg
 # (*) check teco version on exe, check registry key presence
-# (*) decide where to save .reg file, dump log information on screen
 
 class HolidayManager
 	def initialize(weekend, additional_holidays, time)
