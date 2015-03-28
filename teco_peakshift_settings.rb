@@ -1,11 +1,14 @@
 require 'yaml'
 require 'set'
 require 'logger'
-require 'win32/registry'
 require 'getoptlong'
 
-# options to implement:
-# (*) check teco version on exe, check registry key presence
+@registryAccess = true
+begin
+	require 'win32/registry'
+rescue LoadError
+	@registryAccess = false
+end
 
 class HolidayManager
 	def initialize(weekend, additional_holidays, time)
@@ -43,6 +46,7 @@ def printPreamble(registryFile)
 end
 
 def checkRegistryKeyPresence
+	@registryAccess or return
 	begin
 		# fails if the registry keys that should be present because of "Toshiba Eco Utility" are not there
 		Win32::Registry::HKEY_LOCAL_MACHINE.open "SOFTWARE2\\Toshiba\\eco Utility\\PeakShift"
@@ -52,6 +56,8 @@ def checkRegistryKeyPresence
 end
 
 def checkToshibaEcoUtilityPresence
+	@registryAccess or return
+
 	begin
 		key = Win32::Registry::HKEY_LOCAL_MACHINE.open "SOFTWARE\\Toshiba\\eco Utility"
 		installDir = key['InstallDir']
@@ -130,6 +136,7 @@ begin
 	checkToshibaEcoUtilityPresence
 rescue => e
 	@log.error e
+	continueAnyway or puts "execution will stop, please specify command line option '-c' if you really want to continue"
 	continueAnyway or raise
 end
 
